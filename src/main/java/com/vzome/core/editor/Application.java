@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.vzome.core.algebra.AlgebraicField;
+import com.vzome.core.algebra.PolygonField;
 import com.vzome.core.commands.Command;
 import com.vzome.core.commands.XmlSaveFormat;
 import com.vzome.core.exporters.DaeExporter;
@@ -42,9 +43,14 @@ import com.vzome.core.exporters.VRMLExporter;
 import com.vzome.core.exporters.VefExporter;
 import com.vzome.core.kinds.GoldenFieldApplication;
 import com.vzome.core.kinds.HeptagonFieldApplication;
+import com.vzome.core.kinds.PhiPlusSqrtFieldApplication;
+import com.vzome.core.kinds.PolygonFieldApplication;
 import com.vzome.core.kinds.RootThreeFieldApplication;
 import com.vzome.core.kinds.RootTwoFieldApplication;
+import com.vzome.core.kinds.SnubCubeFieldApplication;
 import com.vzome.core.kinds.SnubDodecFieldApplication;
+import com.vzome.core.kinds.SqrtFieldApplication;
+import com.vzome.core.kinds.SqrtPhiFieldApplication;
 import com.vzome.core.render.Color;
 import com.vzome.core.render.Colors;
 import com.vzome.core.viewing.Lights;
@@ -145,29 +151,29 @@ public class Application
         );
         this.fieldAppSuppliers.put("heptagon", HeptagonFieldApplication::new);
         this.fieldAppSuppliers.put("snubDodec", SnubDodecFieldApplication::new);
+        this.fieldAppSuppliers.put("snubCube", SnubCubeFieldApplication::new);
+        this.fieldAppSuppliers.put("sqrtPhi", SqrtPhiFieldApplication::new);
 
         // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // Now add all of the parameterized FieldApplication functions
-        // MAXIMUMSIDES is somewhat arbitrary,
-        // but the PolygonField multiplierMatrix uses (nSides/2)^3 Integers of memory 
-        // and would also bog down computationally if we allow nSides to be too big.
-        // For now, we'll limit it to MAXIMSIDES to ensure reasonable performance.
-        // If memory consumption or performance of the multiply operation is not an issue,
-        // then the MAXIMUMSIDES limit could theoretically be lifted.
-        // As a practical matter, this should be plenty.
-//        final int MAXIMUMSIDES = 30;
-//        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction(PolygonField.MINIMUMSIDES, MAXIMUMSIDES ) {
-//            @Override
-//            public FieldApplication apply(Integer operand) {
-//                return new PolygonFieldApplication(operand);
-//            }
-//        });
-//        this.fieldAppFunctions.put("sqrt", new FieldApplicationFunction(1, Integer.MAX_VALUE) { // range is any positive integer
-//            @Override
-//            public FieldApplication apply(Integer operand) {
-//                return new SqrtFieldApplication(operand);
-//            }
-//        });
+        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction(PolygonField.MINIMUMSIDES, PolygonFieldApplication.MAXIMUMSIDES ) {
+            @Override
+            public FieldApplication apply(Integer operand) {
+                return new PolygonFieldApplication(operand);
+            }
+        });
+        this.fieldAppFunctions.put("sqrt", new FieldApplicationFunction(1, Integer.MAX_VALUE) { // range is any positive integer
+            @Override
+            public FieldApplication apply(Integer operand) {
+                return new SqrtFieldApplication(operand);
+            }
+        });
+        this.fieldAppFunctions.put("phiPlusSqrt", new FieldApplicationFunction(1, Integer.MAX_VALUE) { // range is any positive integer
+            @Override
+            public FieldApplication apply(Integer operand) {
+                return new PhiPlusSqrtFieldApplication(operand);
+            }
+        });
     }
 
     public DocumentModel loadDocument( InputStream bytes ) throws Exception
