@@ -15,9 +15,11 @@ public abstract class AlgebraicField
 
     abstract BigRational[] scaleBy( BigRational[] factors, int whichIrrational );
 
+    void normalize( BigRational[] factors ) {}
+
     public abstract void defineMultiplier( StringBuffer instances, int w );
 
-    public abstract int getOrder();
+    public final int getOrder() { return _order; }
 
     public int getNumIrrationals()
     {
@@ -33,11 +35,13 @@ public abstract class AlgebraicField
 
     private final String name;
 
-    private final AlgebraicNumber one = this .createRational( 1 );
+    private final int _order;
 
-    private final AlgebraicNumber zero = this .createRational( 0 );
+    private final AlgebraicNumber one;
 
-    private AlgebraicField subfield = null;
+    private final AlgebraicNumber zero;
+
+    private final AlgebraicField subfield;
 
     /**
      * Positive powers of the first irrational.
@@ -49,25 +53,35 @@ public abstract class AlgebraicField
      */
     private final ArrayList<AlgebraicNumber> negativePowers = new ArrayList<>( 8 );
 
-    public AlgebraicField( String name )
+    public AlgebraicField( String name, int order )
     {
-        this.name = name;
-        this.positivePowers .add( this .one );
-        this.negativePowers .add( this .one );
-        AlgebraicNumber firstIrrat = this .createAlgebraicNumber( 0, 1 );
-        this.positivePowers .add( firstIrrat );
-        this.negativePowers .add( firstIrrat .reciprocal() );
+        this( name, order, null );
     }
 
-    public AlgebraicField( String name, AlgebraicField subfield )
+    public AlgebraicField( String name, int order, AlgebraicField subfield )
     {
-        this( name );
+        this.name = name;
+        this._order = order;
         this .subfield  = subfield;
+        // Since derived class constructors are not fully initialized,
+        // it's possible that they may not be able to perform some operations including multiply.
+        // Specifically, reciprocal() depends on scaleBy()
+        // which, in the case of ParameterizedField classes,
+        // depends on the constructor being fully executed beforehand.
+        // Also, normalize() may not work for some AlgebraicNumbers with non-zero irrational factors
+        // although createRational() can safely be created at this point.
+        zero = this .createRational( 0 );
+        one = this .createRational( 1 );
     }
 
     public String getName()
     {
         return this.name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override
@@ -130,28 +144,40 @@ public abstract class AlgebraicField
             return this .one;
         if ( power > 0 )
         {
-            // first, fill in the missing powers in the list
-            int size = this .positivePowers .size();
-            AlgebraicNumber irrat = this .positivePowers .get( 1 );
-            AlgebraicNumber last = this .positivePowers .get( size - 1 );
-            for (int i = size; i <= power; i++) {
-                AlgebraicNumber next = last .times( irrat );
-                this .positivePowers .add( next );
-                last = next;
+            // fill in any missing powers at the end of the list
+            if(power >= positivePowers .size()) {
+                if (positivePowers.isEmpty()) {
+                    positivePowers.add(one);
+                    positivePowers.add(createAlgebraicNumber(0, 1));
+                }
+                int size = positivePowers .size();
+                AlgebraicNumber irrat = this .positivePowers .get( 1 );
+                AlgebraicNumber last = this .positivePowers .get( size - 1 );
+                for (int i = size; i <= power; i++) {
+                    AlgebraicNumber next = last .times( irrat );
+                    this .positivePowers .add( next );
+                    last = next;
+                }
             }
             return positivePowers .get( power );
         }
         else
         {
-            power = - power;
-            // first, fill in the missing powers in the list
-            int size = this .negativePowers .size();
-            AlgebraicNumber irrat = this .negativePowers .get( 1 );
-            AlgebraicNumber last = this .negativePowers .get( size - 1 );
-            for (int i = size; i <= power; i++) {
-                AlgebraicNumber next = last .times( irrat );
-                this .negativePowers .add( next );
-                last = next;
+            power = - power; // power is now a positive number and can be used as an offset into negativePowers
+            // fill in any missing powers at the end of the list
+            if(power >= negativePowers .size()) {
+                if (negativePowers.isEmpty()) {
+                    negativePowers.add(one);
+                    negativePowers.add(createAlgebraicNumber(0, 1).reciprocal());
+                }
+                int size = negativePowers .size();
+                AlgebraicNumber irrat = this .negativePowers .get( 1 );
+                AlgebraicNumber last = this .negativePowers .get( size - 1 );
+                for (int i = size; i <= power; i++) {
+                    AlgebraicNumber next = last .times( irrat );
+                    this .negativePowers .add( next );
+                    last = next;
+                }
             }
             return negativePowers .get( power );
         }
@@ -177,25 +203,18 @@ public abstract class AlgebraicField
     }
     
     /**
-    * @deprecated As of 2/1/2016: Use {@link #createRational( int wholeNumber )} 
-    * or {@link #createRational( int numerator, int denominator )} instead
-    * since the new methods ensure that there are exactly one or two parameters at compile-time.
-    * 
-    * For example:
-    * <code> createRational( new int[]{ 0, 1 } ); </code> becomes:
-    * <code> createRational( 0 ); </code> 
-    * and 
-    * <code> createRational( new int[]{ 1, 2 } ); </code> becomes:
-    * <code> createRational( 1, 2 ); </code>.
-    * 
-    * When all references to this varargs overload have been replaced, 
-    *   then this overload should be removed.
-    */
-    @Deprecated
-    public final AlgebraicNumber createRational( int... value )
-    {
-        int denom = value.length == 2 ? value[ 1 ] : 1;
-        return createAlgebraicNumber( value[0], 0, denom, 0 );
+     * @return The AlgebraicNumber to be use for the Chord Ratio construction in the given field.
+     * This can be used to generalize an AffinePolygon tool and a PolygonalAntiprismSymmetry.
+     * In the case of the PentagonField, it returns phi.
+     * In the case of the HeptagonField, it will be overridden to return sigma.
+     * In the case of the PolygonField, it will also need to be be overridden.
+     * In other fields, it may need to be overridden, especially if the field has multiple subfields
+     * or if the order of the terms is different.
+     * This implementation should work for any sqrt field 
+     * and will be reasonable for any field with phi as its first irrational.
+     */
+    public AlgebraicNumber getAffineScalar() {
+        return createAlgebraicNumber( new int[]{0, 1} );
     }
 
     public BigRational[] negate( BigRational[] array )
@@ -309,7 +328,7 @@ public abstract class AlgebraicField
 
     public final static int DEFAULT_FORMAT = 0; // 4 + 3 \u03C6
 
-    public final static int EXPRESSION_FORMAT = 1; // 4+\u03C6*3
+    public final static int EXPRESSION_FORMAT = 1; // 4 +3*phi
 
     public final static int ZOMIC_FORMAT = 2; // 4 3
 

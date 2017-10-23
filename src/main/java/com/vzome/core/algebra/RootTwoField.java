@@ -8,7 +8,7 @@ public class RootTwoField extends AlgebraicField
 {
     public RootTwoField()
     {
-        super( "rootTwo" );
+        super( "rootTwo", 2 );
         
         // we start with 1/2 just because we did in the golden field
         defaultStrutScaling = createAlgebraicNumber( 1, 0, 2, -3 );
@@ -18,12 +18,6 @@ public class RootTwoField extends AlgebraicField
     public void defineMultiplier( StringBuffer buf, int which )
     {
         buf .append( "" );
-    }
-    
-    @Override
-    public int getOrder()
-    {
-        return 2;
     }
     
     public static final double ROOT_2 = Math.sqrt( 2d );

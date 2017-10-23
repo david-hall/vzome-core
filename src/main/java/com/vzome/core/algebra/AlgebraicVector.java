@@ -56,7 +56,7 @@ public final class AlgebraicVector implements Comparable<AlgebraicVector>
         AlgebraicVector other = (AlgebraicVector) obj;
         if(!field.equals( other.field )) {
             String reason  = "Invalid comparison of " 
-                    + getClass().getSimpleName() + "s"
+                    + getClass().getSimpleName() + "s "
                     + "with different fields: "
                     + field.getName()
                     + " and "

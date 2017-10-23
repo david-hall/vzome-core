@@ -25,6 +25,7 @@ public class AlgebraicNumber implements Fields.Element, Comparable<AlgebraicNumb
         for ( int i = factors.length; i < this.factors.length; i++ ) {
             this .factors[ i ] = BigRational.ZERO;
         }
+        field.normalize( this.factors );
     }
 
     /**
@@ -69,7 +70,7 @@ public class AlgebraicNumber implements Fields.Element, Comparable<AlgebraicNumb
         AlgebraicNumber other = (AlgebraicNumber) obj;
         if(!field.equals( other.field )) {
             String reason  = "Invalid comparison of " 
-                    + getClass().getSimpleName() + "s"
+                    + getClass().getSimpleName() + "s "
                     + "with different fields: "
                     + field.getName()
                     + " and "

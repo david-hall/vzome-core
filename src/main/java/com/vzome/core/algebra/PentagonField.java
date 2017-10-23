@@ -6,7 +6,7 @@ public final class PentagonField extends AlgebraicField
 {
     public PentagonField()
     {
-        super( "golden" );
+        super( "golden", 2 );
 
         defaultStrutScaling = createAlgebraicNumber( -1, 1, 2, 0 );
     };
@@ -23,12 +23,6 @@ public final class PentagonField extends AlgebraicField
     double evaluateNumber( BigRational[] factors )
     {
         return factors[ ONES_PLACE ] .getReal() + PHI_VALUE * factors[ PHIS_PLACE ] .getReal();
-    }
-
-    @Override
-    public int getOrder()
-    {
-        return 2;
     }
 
     private final AlgebraicNumber defaultStrutScaling;

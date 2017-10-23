@@ -15,7 +15,7 @@ public class RootThreeField extends AlgebraicField
     
     public RootThreeField()
     {
-        super( "rootThree" );
+        super( "rootThree", 2 );
         
         // we start with 1/2 just because we did in the golden field
         defaultStrutScaling = createAlgebraicNumber( 1, 0, 2, -3 );
@@ -34,12 +34,6 @@ public class RootThreeField extends AlgebraicField
         BigRational ones = first[ ONES_PLACE ].times( second[ ONES_PLACE ] ) .plus( first[ SQRT3_PLACE ].times( second[ SQRT3_PLACE ] ) .times( THREE ) );
         
         return new BigRational[]{ ones, sqrt3s };
-    }
-
-    @Override
-    public int getOrder()
-    {
-        return 2;
     }
     
     @Override

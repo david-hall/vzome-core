@@ -119,7 +119,7 @@ public class RenderedModelTest
 		model .addListener( checker );
 
 		// create an automatic orbit just off the X-axis, as if we did "join points"
-		AlgebraicNumber small = field .sigmaReciprocal();
+		AlgebraicNumber small = field .createAlgebraicNumber( new int[] { 0, 0, 1 } ).reciprocal(); // sigma Reciprocal
 		small = small .times( small );
 		AlgebraicVector vector = new AlgebraicVector( field .one(), small, small );
 		Axis zone = sys .getAxis( vector );
