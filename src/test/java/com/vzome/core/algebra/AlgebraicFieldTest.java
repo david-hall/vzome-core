@@ -20,6 +20,27 @@ public class AlgebraicFieldTest {
         FIELDS.add (new RootThreeField());
         FIELDS.add (new HeptagonField());
         FIELDS.add (new SnubDodecField(pentagonField));
+
+        FIELDS.add (new SqrtField(1));
+        FIELDS.add (new SqrtField(2));
+        FIELDS.add (new SqrtField(3));
+        FIELDS.add (new SqrtField(4));
+        FIELDS.add (new SqrtField(5));
+
+        // order 2
+        FIELDS.add (new PolygonField(4));
+        FIELDS.add (new PolygonField(5));
+        // order 3
+        FIELDS.add (new PolygonField(6));
+        FIELDS.add (new PolygonField(7));
+        // order 4
+        FIELDS.add (new PolygonField(8));
+        FIELDS.add (new PolygonField(9));
+        // order 5
+        FIELDS.add (new PolygonField(10));
+        FIELDS.add (new PolygonField(11));
+        // higher orders ad nauseum...
+        FIELDS.add (new PolygonField(12));
     }
 
     @Test

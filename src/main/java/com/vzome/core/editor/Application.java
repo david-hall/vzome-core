@@ -148,14 +148,15 @@ public class Application
 
         // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // Now add all of the parameterized FieldApplication functions
-        // MAXIMSIDES is somewhat arbitrary,
-        // but the PolygonField multiplierMatrix uses (nSides/2)^3 Integers of memory and would bog down if we allow nSides to be too big.
+        // MAXIMUMSIDES is somewhat arbitrary,
+        // but the PolygonField multiplierMatrix uses (nSides/2)^3 Integers of memory 
+        // and would also bog down computationally if we allow nSides to be too big.
         // For now, we'll limit it to MAXIMSIDES to ensure reasonable performance.
         // If memory consumption or performance of the multiply operation is not an issue,
-        // then the MAXIMSIDES limit could theoretically be lifted.
+        // then the MAXIMUMSIDES limit could theoretically be lifted.
         // As a practical matter, this should be plenty.
-//        final int MAXIMSIDES = 30;
-//        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction(PolygonField.MINIMUMSIDES, MAXIMSIDES ) {
+//        final int MAXIMUMSIDES = 30;
+//        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction(PolygonField.MINIMUMSIDES, MAXIMUMSIDES ) {
 //            @Override
 //            public FieldApplication apply(Integer operand) {
 //                return new PolygonFieldApplication(operand);

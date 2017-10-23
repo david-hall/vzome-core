@@ -44,7 +44,19 @@ public class AlgebraicNumberTest
             new RootTwoField(),
             new RootThreeField(),
             new HeptagonField(),
-            new SnubDodecField(pentagonField)
+            new SnubDodecField(pentagonField),
+            new SqrtField(2),
+            new SqrtField(3),
+            new SqrtField(4),
+            new SqrtField(5),
+            new PolygonField(4),
+            new PolygonField(5),
+            new PolygonField(6),
+            new PolygonField(7),
+            new PolygonField(8),
+            new PolygonField(9),
+            new PolygonField(10),
+            new PolygonField(11),
         };
         for(AlgebraicField field : fields ) {
             AlgebraicNumber one = field.createPower(0); // anything to the zero power...
@@ -255,6 +267,86 @@ public class AlgebraicNumberTest
         assertEquals( field .one() .plus( sigma ), rho .times( rho ) );
         assertEquals( field .one() .plus( rho ) .plus( sigma ), sigma .times( sigma ) );
         assertEquals( sigma .times( sigma ) .times( sigma ) .times( sigma ) .times( sigma ), sigma_5 );
+    }
+
+    public void compareParameterizedAndLegacyFields(ParameterizedField<?> parameterizedField, AlgebraicField legacyField) {
+        compareParameterizedAndLegacyFields(parameterizedField, legacyField, true);
+    }
+
+    public void compareParameterizedAndLegacyFields(ParameterizedField<?> parameterizedField, AlgebraicField legacyField, boolean verifyOrder) {
+        assertNotEquals( parameterizedField, legacyField);
+        final int order = legacyField.getOrder();
+        if(verifyOrder) {
+            assertEquals( parameterizedField.getOrder(), legacyField.getOrder());
+        } else {
+            assertTrue( parameterizedField.getOrder() >= order);
+            assertTrue( legacyField.getOrder() >= order);
+        }
+        BigRational[] factors = legacyField.zero().getFactors();
+        final int range = 100;
+        // first time thru, we cycle through each factor individually, leaving the others at 0
+        for (int i = 0; i < order; i++) {
+            BigRational zero = factors[i];
+            for (int v = 0-range; v <= range; v++) {
+                factors[i] = new BigRational(v);
+                AlgebraicNumber paramNumber = parameterizedField.createAlgebraicNumber(factors);
+                AlgebraicNumber legacyNumber = legacyField.createAlgebraicNumber(factors);
+                String msg = "i=" + i + " v=" + v;
+                assertEquals(msg, paramNumber.evaluate(), legacyNumber.evaluate());
+            }
+            factors[i] = zero;
+        }
+        // second time thru, we count through all factors incrementally within the whole range
+        for (int i = 0; i < order; i++) {
+            factors[i] = new BigRational(0-range);
+        }
+        for (int i = 0; i < order; i++) {
+            for (int v = 0-range; v <= range; v++) {
+                factors[i] = new BigRational(v);
+                AlgebraicNumber paramNumber = parameterizedField.createAlgebraicNumber(factors);
+                AlgebraicNumber legacyNumber = legacyField.createAlgebraicNumber(factors);
+                String msg = "i=" + i + " v=" + v;
+                assertEquals(msg, paramNumber.evaluate(), legacyNumber.evaluate());
+//                System.out.print(paramNumber.toString(EXPRESSION_FORMAT) + " = " + legacyNumber.toString(EXPRESSION_FORMAT));
+//                System.out.printf(" = %1.18f", legacyNumber.evaluate());
+//                System.out.println();
+            }
+        }
+    }
+
+    @Test
+    public void testComparableSqrtFields() {
+        compareParameterizedAndLegacyFields(new SqrtField(2), new RootTwoField());
+        compareParameterizedAndLegacyFields(new SqrtField(3), new RootThreeField());
+        compareParameterizedAndLegacyFields(new SqrtField(2), new PolygonField(4));
+    }
+
+    @Test
+    public void testComparablePolygonFields() {
+        compareParameterizedAndLegacyFields(new PolygonField(5), new PentagonField());
+        compareParameterizedAndLegacyFields(new PolygonField(6), new RootThreeField(), false);
+        compareParameterizedAndLegacyFields(new PolygonField(7), new HeptagonField());
+        compareParameterizedAndLegacyFields(new PolygonField(4), new RootTwoField());
+        compareParameterizedAndLegacyFields(new PolygonField(4), new SqrtField(2));
+    }
+
+    @Test
+    public void testAlgebraicNumberNormalization() {
+        {
+            PolygonField polyField = new PolygonField(6);   // 6 is the only PolygonField that needs normalization
+            AlgebraicNumber hexNum = polyField .createAlgebraicNumber( new int[]{ 3,       4, 5 } );
+            AlgebraicNumber expect = polyField .createAlgebraicNumber( new int[]{ 3+(5*2), 4, 0 } );
+            assertEquals(expect, hexNum);
+            assertTrue(hexNum.getFactors()[2].isZero());
+        }
+        {
+            final int n = 3;
+            SqrtField sqrtField = new SqrtField(n * n);       // Any perfect square field will need normalization.
+            AlgebraicNumber rootNum = sqrtField .createAlgebraicNumber( new int[]{ 4, 5 } );
+            AlgebraicNumber expected = sqrtField .createRational(                  4+(5*n)); // result should always be rational
+            assertEquals(expected, rootNum);
+            assertTrue(rootNum.getFactors()[1].isZero());
+        }
     }
 
     @Test
