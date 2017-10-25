@@ -344,6 +344,50 @@ public abstract class AlgebraicField
         return this .one;
     }
 
+    /**
+     *
+     * @param nums is an array of integer arrays: One array of coordinate terms per dimension.
+     * Initially, this is designed to simplify migration of order 2 golden directions
+     * to new fields of higher order having golden subfields as their first two factors.
+     {@code
+        field.createVector( new int[]  {  0,1,2,3,   4,5,6,7,   8,9,0,1  } );   // older code like this...
+        field.createVector( new int[][]{ {0,1,2,3}, {4,5,6,7}, {8,9,0,1} } );   // should be replaced by this...
+        field.createVector( new int[][]{ {0,1,2,3}, {4,5,6,7}, {8,9    } } );   // ... or even this.
+     }
+     * The older code shown in the first example requires an order 2 field.
+     * The second example will work with any field of order 2 or greater.
+     * This new overload has the advantage that the internal arrays representing the individual dimensions are more clearly delineated and controlled.
+     * As shown in the third example, the internal arrays need not be all the same length. Trailing zero terms can be omitted as shown.
+     * Inner arrays require an even number of elements since they represent a sequence of numerator/denominator pairs.
+     * @return an AlgebraicVector
+     */
+    public AlgebraicVector createVector( int[][] nums )
+    {
+        int dims = nums.length;
+        AlgebraicNumber[] coords = new AlgebraicNumber[ dims ];
+        for(int c = 0; c < coords.length; c++) {
+            int coordLength = nums[c].length;
+            if ( coordLength % 2 != 0 ) {
+                throw new IllegalStateException( "Vector dimension " + c + " has " + coordLength + " components. An even number is required." );
+            }
+            int nFactors = coordLength / 2;
+            int order = getOrder();
+            if ( nFactors > order ) {
+                throw new IllegalStateException( "Vector dimension " + c + " has " + (coordLength /2) + " terms." 
+                        + " Each dimension of the " + this.getName() + " field is limited to " + order + " terms."
+                        + " Each term consists of a numerator and a denominator." );
+            }
+            BigRational[] factors = new BigRational[nFactors];
+            for (int f = 0; f < nFactors; f++) {
+                int numerator   = nums[c][(f*2)  ];
+                int denominator = nums[c][(f*2)+1];
+                factors[f] = new BigRational(numerator, denominator);
+            }
+            coords[c] = new AlgebraicNumber(this, factors);
+        }
+        return new AlgebraicVector( coords );
+    }
+
     public AlgebraicVector createVector( int[] is )
     {
         int order = this .getOrder();
