@@ -60,7 +60,7 @@ import java.util.function.Supplier;
 
 public class Application
 {
-    private abstract class FieldApplicationFunction implements Function<Integer, FieldApplication> {
+    private abstract class FieldApplicationFunction<T extends FieldApplication<?>> implements Function<Integer, T> {
         public final int minimum;
         public final int maximum;
         public FieldApplicationFunction(int min, int max) {
@@ -72,9 +72,9 @@ public class Application
          * 
          * @param operand
          * @return a FieldApplication. An IllegalArgumentException is thrown if limits are not null and the operand is out of range.
-         * Use (@code apply(operand)) directly to bypass the range checks
+         * Use {@code apply(operand)} directly to bypass the range checks
          */
-        public FieldApplication get(Integer operand) {
+        public T get(Integer operand) {
             if(operand < minimum) {
                 throw new IllegalArgumentException("operand " + operand + " must be greater than " + minimum);
             }
@@ -85,8 +85,8 @@ public class Application
         }
     }
 
-    private final Map<String, Supplier<FieldApplication> > fieldAppSuppliers = new HashMap<>();
-    private final Map<String, FieldApplicationFunction > fieldAppFunctions = new HashMap<>();
+    private final Map<String, Supplier<FieldApplication<?>> > fieldAppSuppliers = new HashMap<>();
+    private final Map<String, FieldApplicationFunction<?> > fieldAppFunctions = new HashMap<>();
     
     private final Colors mColors;
 
@@ -156,21 +156,21 @@ public class Application
 
         // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // Now add all of the parameterized FieldApplication functions
-        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction(PolygonField.MINIMUMSIDES, PolygonFieldApplication.MAXIMUMSIDES ) {
+        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction<PolygonFieldApplication>(PolygonField.MINIMUMSIDES, PolygonFieldApplication.MAXIMUMSIDES ) {
             @Override
-            public FieldApplication apply(Integer operand) {
+            public PolygonFieldApplication apply(Integer operand) {
                 return new PolygonFieldApplication(operand);
             }
         });
-        this.fieldAppFunctions.put("sqrt", new FieldApplicationFunction(1, Integer.MAX_VALUE) { // range is any positive integer
+        this.fieldAppFunctions.put("sqrt", new FieldApplicationFunction<SqrtFieldApplication>(1, Integer.MAX_VALUE) { // range is any positive integer
             @Override
-            public FieldApplication apply(Integer operand) {
+            public SqrtFieldApplication apply(Integer operand) {
                 return new SqrtFieldApplication(operand);
             }
         });
-        this.fieldAppFunctions.put("phiPlusSqrt", new FieldApplicationFunction(1, Integer.MAX_VALUE) { // range is any positive integer
+        this.fieldAppFunctions.put("phiPlusSqrt", new FieldApplicationFunction<PhiPlusSqrtFieldApplication>(1, Integer.MAX_VALUE) { // range is any positive integer
             @Override
-            public FieldApplication apply(Integer operand) {
+            public PhiPlusSqrtFieldApplication apply(Integer operand) {
                 return new PhiPlusSqrtFieldApplication(operand);
             }
         });
@@ -220,14 +220,14 @@ public class Application
             fieldName = element .getAttributeNS( XmlSaveFormat.CURRENT_FORMAT, "field" );
         if ( fieldName .isEmpty() )
             fieldName = "golden";
-        FieldApplication kind = this .getDocumentKind( fieldName );
+        FieldApplication<?> kind = this .getDocumentKind( fieldName );
         
         return new DocumentModel( kind, failures, element, this );
     }
 
 	public DocumentModel createDocument( String fieldName )
 	{
-		FieldApplication kind = this .getDocumentKind( fieldName );
+		FieldApplication<?> kind = this .getDocumentKind( fieldName );
 		return new DocumentModel( kind, failures, null, this );
 	}
 
@@ -235,7 +235,7 @@ public class Application
 	{
 		String fieldName = "golden";
 		// TODO: use fieldName from VEF input
-		FieldApplication kind = this .getDocumentKind( fieldName );
+		FieldApplication<?> kind = this .getDocumentKind( fieldName );
 		DocumentModel result = new DocumentModel( kind, failures, null, this );
 		result .doScriptAction( extension, content );
 		return result;
@@ -246,13 +246,13 @@ public class Application
 		return this .getDocumentKind( name ) .getField();
 	}
 
-	public FieldApplication getDocumentKind( String name )
+	public FieldApplication<?> getDocumentKind( String name )
 	{
         if(name.contains(".")) {
             // parameterized
             String[] args = name.split(".", 2);
             if (args.length == 2) {
-                FieldApplicationFunction function = fieldAppFunctions.get(args[0]);
+                FieldApplicationFunction<?> function = fieldAppFunctions.get(args[0]);
                 if (function != null) {
                     // we could use apply() instead of get() if we want to ignore the range tests
                     return function.get(Integer.parseInt(args[1]));
@@ -260,7 +260,7 @@ public class Application
             }
         } else {
             // parameterless
-            Supplier<FieldApplication> supplier = fieldAppSuppliers.get(name);
+            Supplier<FieldApplication<?>> supplier = fieldAppSuppliers.get(name);
             if( supplier != null ) {
                 return supplier.get();
             }
@@ -286,11 +286,11 @@ public class Application
      *
      * @param fieldName
      * @return a String indicating the minimum acceptable value for the FieldApplication's operand.
-     * If (@code fieldName) is not found, then the empty string will be returned,
+     * If {@code fieldName} is not found, then the empty string will be returned,
      */
 	public String getFieldMinimum(String fieldName)
 	{
-        FieldApplicationFunction factory = fieldAppFunctions.get(fieldName);
+        FieldApplicationFunction<?> factory = fieldAppFunctions.get(fieldName);
         return (factory == null)
                 ? ""
                 : Integer.toString(factory.minimum);
@@ -300,11 +300,11 @@ public class Application
      *
      * @param fieldName
      * @return a String indicating the maximum acceptable value for the FieldApplication's operand.
-     * If (@code fieldName) is not found, then the empty string will be returned,
+     * If {@code fieldName} is not found, then the empty string will be returned,
      */
 	public String getFieldMaximum(String fieldName)
 	{
-        FieldApplicationFunction factory = fieldAppFunctions.get(fieldName);
+        FieldApplicationFunction<?> factory = fieldAppFunctions.get(fieldName);
         return (factory == null)
                 ? ""
                 : Integer.toString(factory.maximum);

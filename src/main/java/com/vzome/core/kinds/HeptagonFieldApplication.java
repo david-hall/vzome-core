@@ -41,7 +41,7 @@ import com.vzome.fields.heptagon.HeptagonalAntiprismSymmetry;
  * @author Scott Vorthmann
  *
  */
-public class HeptagonFieldApplication extends DefaultFieldApplication
+public class HeptagonFieldApplication extends DefaultFieldApplication<HeptagonField>
 {
 	public HeptagonFieldApplication()
 	{

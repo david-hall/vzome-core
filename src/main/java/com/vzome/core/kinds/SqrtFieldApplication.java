@@ -37,7 +37,7 @@ import com.vzome.core.viewing.ExportedVEFShapes;
  * This is initially just a placeholder copy of RootThreeFieldApplication
  *
  */
-public class SqrtFieldApplication extends DefaultFieldApplication
+public class SqrtFieldApplication extends DefaultFieldApplication<SqrtField>
 {
 	public SqrtFieldApplication(int radicand)
 	{

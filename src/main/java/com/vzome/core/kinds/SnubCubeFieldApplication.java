@@ -44,7 +44,7 @@ import com.vzome.fields.heptagon.HeptagonalAntiprismSymmetry;
  * This is initially just a copy of HeptagonFieldApplication
  *
  */
-public class SnubCubeFieldApplication extends DefaultFieldApplication
+public class SnubCubeFieldApplication extends DefaultFieldApplication<SnubCubeField>
 {
 	public SnubCubeFieldApplication()
 	{

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.vzome.api.Tool;
 import com.vzome.api.Tool.Factory;
-import com.vzome.core.algebra.AlgebraicField;
 import com.vzome.core.algebra.AlgebraicNumber;
 import com.vzome.core.algebra.PentagonField;
 import com.vzome.core.algebra.SnubDodecField;
@@ -19,7 +18,6 @@ import com.vzome.core.commands.CommandTetrahedralSymmetry;
 import com.vzome.core.editor.AxialStretchTool;
 import com.vzome.core.editor.AxialSymmetryToolFactory;
 import com.vzome.core.editor.BookmarkTool;
-import com.vzome.core.editor.FieldApplication;
 import com.vzome.core.editor.IcosahedralToolFactory;
 import com.vzome.core.editor.InversionTool;
 import com.vzome.core.editor.LinearMapTool;
@@ -48,25 +46,16 @@ import com.vzome.core.viewing.ExportedVEFShapes;
  * @author vorth
  *
  */
-public class SnubDodecFieldApplication implements FieldApplication
+public class SnubDodecFieldApplication extends DefaultFieldApplication<SnubDodecField>
 {
-	private final AlgebraicField field = new SnubDodecField( new PentagonField() );
-
-	@Override
-	public String getName()
+    public SnubDodecFieldApplication()
 	{
-		return this .field .getName();
-	}
-
-	@Override
-	public AlgebraicField getField()
-	{
-		return this .field;
+		super( new SnubDodecField(new PentagonField()) );
 	}
 
     private final SymmetryPerspective icosahedralPerspective = new SymmetryPerspective()
     {
-        private final IcosahedralSymmetry symmetry = new IcosahedralSymmetry( field, "solid connectors" )
+        private final IcosahedralSymmetry symmetry = new IcosahedralSymmetry( getField(), "solid connectors" )
         {
         	@Override
         	protected void createOtherOrbits()

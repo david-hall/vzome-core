@@ -44,7 +44,7 @@ import com.vzome.fields.heptagon.HeptagonalAntiprismSymmetry;
  * This is initially just a copy of HeptagonFieldApplication
  *
  */
-public class PolygonFieldApplication extends DefaultFieldApplication
+public class PolygonFieldApplication extends DefaultFieldApplication<PolygonField>
 {
     // MAXIMUMSIDES is somewhat arbitrary,
     // but the PolygonField multiplierMatrix uses (nSides/2)^3 Integers of memory

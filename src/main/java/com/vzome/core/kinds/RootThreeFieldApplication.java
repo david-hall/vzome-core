@@ -35,7 +35,7 @@ import com.vzome.core.viewing.ExportedVEFShapes;
  * @author Scott Vorthmann
  *
  */
-public class RootThreeFieldApplication extends DefaultFieldApplication
+public class RootThreeFieldApplication extends DefaultFieldApplication<RootThreeField>
 {
 	public RootThreeFieldApplication()
 	{

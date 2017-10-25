@@ -40,7 +40,7 @@ import com.vzome.core.viewing.ExportedVEFShapes;
  * @author Scott Vorthmann
  *
  */
-public class RootTwoFieldApplication extends DefaultFieldApplication
+public class RootTwoFieldApplication extends DefaultFieldApplication<RootTwoField>
 {
 	public RootTwoFieldApplication()
 	{

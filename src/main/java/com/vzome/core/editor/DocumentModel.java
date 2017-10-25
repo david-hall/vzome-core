@@ -136,7 +136,7 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context
 
 	private final Lights sceneLighting;
 
-	private final FieldApplication kind;
+	private final FieldApplication<?> kind;
 
     public void addPropertyChangeListener( PropertyChangeListener listener )
     {
@@ -158,7 +158,7 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context
     	propertyChangeSupport .firePropertyChange( propertyName, oldValue, newValue );
     }
 
-	public DocumentModel( final FieldApplication kind, Command.FailureChannel failures, Element xml, final Application app )
+	public DocumentModel( final FieldApplication<?> kind, Command.FailureChannel failures, Element xml, final Application app )
 	{
 		super();
 		this .kind = kind;
@@ -1441,7 +1441,7 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context
     	this .mEditorModel .setSymmetrySystem( system );
     }
 
-	public FieldApplication getFieldApplication()
+	public FieldApplication<?> getFieldApplication()
 	{
 		return this .kind;
 	}
