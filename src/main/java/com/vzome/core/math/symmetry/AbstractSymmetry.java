@@ -127,6 +127,17 @@ public abstract class AbstractSymmetry implements Symmetry
 		return null;
 	}
 	
+    public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm )
+    {
+        AlgebraicVector aNorm = mField .createVector( norm );
+        return createZoneOrbit( name, prototype, rotatedPrototype, aNorm, false );
+    }
+
+    /**
+     * @deprecated As of 11/1/2017: Use {@link #createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm )} instead.
+     * @see AlgebraicField#createVector( int[][] )
+     */
+    @Deprecated
     public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[] norm )
     {
         AlgebraicVector aNorm = mField .createVector( norm );
@@ -138,6 +149,17 @@ public abstract class AbstractSymmetry implements Symmetry
         return createZoneOrbit( name, prototype, rotatedPrototype, norm, false );
     }
 
+    public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard )
+    {
+        AlgebraicVector aNorm = mField .createVector( norm );
+        return createZoneOrbit( name, prototype, rotatedPrototype, aNorm, standard, false );
+    }
+
+    /**
+     * @deprecated As of 11/1/2017: Use {@link #createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard )} instead.
+     * @see AlgebraicField#createVector( int[][] )
+     */
+    @Deprecated
     public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[] norm, boolean standard )
     {
         AlgebraicVector aNorm = mField .createVector( norm );
@@ -149,6 +171,17 @@ public abstract class AbstractSymmetry implements Symmetry
         return createZoneOrbit( name, prototype, rotatedPrototype, norm, standard, false );
     }
 
+    protected Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard, boolean halfSizes )
+    {
+        AlgebraicVector aNorm = mField .createVector( norm );
+        return createZoneOrbit( name, prototype, rotatedPrototype, aNorm, standard, false, null );
+    }
+
+    /**
+     * @deprecated As of 11/1/2017: Use {@link #createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard, boolean halfSizes )} instead.
+     * @see AlgebraicField#createVector( int[][] )
+     */
+    @Deprecated
     protected Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[] norm, boolean standard, boolean halfSizes )
     {
         AlgebraicVector aNorm = mField .createVector( norm );
@@ -160,6 +193,17 @@ public abstract class AbstractSymmetry implements Symmetry
         return createZoneOrbit( name, prototype, rotatedPrototype, norm, standard, false, mField .one() );
     }
 
+    public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard, boolean halfSizes, AlgebraicNumber unitLength )
+    {
+        AlgebraicVector aNorm = mField .createVector( norm );
+        return createZoneOrbit( name, prototype, rotatedPrototype, aNorm, standard, halfSizes, unitLength );
+    }
+
+    /**
+     * @deprecated As of 11/1/2017: Use {@link #createZoneOrbit( String name, int prototype, int rotatedPrototype, int[][] norm, boolean standard, boolean halfSizes, AlgebraicNumber unitLength )} instead.
+     * @see AlgebraicField#createVector( int[][] )
+     */
+    @Deprecated
     public Direction createZoneOrbit( String name, int prototype, int rotatedPrototype, int[] norm, boolean standard, boolean halfSizes, AlgebraicNumber unitLength )
     {
         AlgebraicVector aNorm = mField .createVector( norm );

@@ -388,6 +388,10 @@ public abstract class AlgebraicField
         return new AlgebraicVector( coords );
     }
 
+    /**
+     * @deprecated As of 11/1/2017: Use {@link #createVector( int[][] nums )} instead.
+     */
+    @Deprecated
     public AlgebraicVector createVector( int[] is )
     {
         int order = this .getOrder();

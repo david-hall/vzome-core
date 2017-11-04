@@ -158,7 +158,12 @@ public class BigRational implements Comparable<BigRational>, Fields.Element {
     
     private static final boolean multOverflow( long a, long b )
     {
-        return false; // TODO check for overflow and throw an exception
+        try {
+            Math.multiplyExact(a, b);
+        } catch ( ArithmeticException ex ) {
+            return true;
+        }
+        return false;
     }
 
     // return { -1, 0, + 1 } if a < b, a = b, or a > b
@@ -262,6 +267,9 @@ public class BigRational implements Comparable<BigRational>, Fields.Element {
         BigRational a = this;
         if ( a .bigNum == null && b .bigNum == null )
         {
+            // TODO: Can we use Math.multiplyExact() or Math.addExact() her instead of multOverflow?
+            // Ideally, we can use their result immediately if no exception is thrown
+            // instead of multiplying once to test for overflow and then again for real.
             if ( multOverflow( a.num, b.den ) || multOverflow( a.den, b.num ) || multOverflow( a.den, b.den ) )
                 return a .big() .plus( b .big() );
             else
