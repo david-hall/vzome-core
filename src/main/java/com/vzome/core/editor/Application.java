@@ -250,7 +250,7 @@ public class Application
 	{
         if(name.contains(".")) {
             // parameterized
-            String[] args = name.split(".", 2);
+            String[] args = name.split("\\.", 2);
             if (args.length == 2) {
                 FieldApplicationFunction<?> function = fieldAppFunctions.get(args[0]);
                 if (function != null) {
@@ -265,11 +265,7 @@ public class Application
                 return supplier.get();
             }
         }
-
-        // TODO: Either log the problem or maybe
-        // throw new IllegalArgumentException("Unknown Application Type " + name);
-        // or both
-        return null;
+        throw new IllegalArgumentException("Unknown Application Type " + name);
 	}
 
 	public Set<String> getFieldNames()

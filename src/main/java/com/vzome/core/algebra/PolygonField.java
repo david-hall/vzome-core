@@ -89,7 +89,7 @@ public class PolygonField extends ParameterizedField<Integer> {
 //                break;
 
             default:
-                final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                final String alphabet = "abcdefghijklmnopqrstuvwxyz";
                 int order = getOrder();
                 if(order -1 <= alphabet.length()) {
                     for(int i = 1; i < order; i++) {
@@ -101,8 +101,8 @@ public class PolygonField extends ParameterizedField<Integer> {
                     // The article "Proof by Picture: Products and Reciprocals of Diagonal Length Ratios in the Regular Polygon"
                     // at http://forumgeom.fau.edu/FG2006volume6/FG200610.pdf uses one-based indexing for the diagonals,
                     // but I am going to use zero-based indexing so it corresponds to our coefficients and multiplierMatrix indices.
-                    // irrationalLabels[0] should never be needed, but I'll initialize it anyway
-                    for(int i = 0; i < order; i++) {
+                    // irrationalLabels[0] should never be needed, so I'll leave it blank.
+                    for(int i = 1; i < order; i++) {
                         irrationalLabels[i] = new String[]{ "d" + subscriptString(i), "d[" + i + "]" };
                     }
                 }

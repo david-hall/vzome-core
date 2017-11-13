@@ -1,13 +1,11 @@
 package com.vzome.core.viewing;
 
+import com.vzome.core.algebra.AlgebraicMatrix;
 import com.vzome.core.algebra.AlgebraicNumber;
 import com.vzome.core.algebra.AlgebraicVector;
 import com.vzome.core.algebra.PolygonField;
 import com.vzome.core.math.Polyhedron;
 import com.vzome.core.math.symmetry.AntiprismSymmetry;
-import com.vzome.core.math.symmetry.Axis;
-import com.vzome.core.math.symmetry.Direction;
-import com.vzome.core.math.symmetry.Symmetry;
 
 /**
  * @author David Hall
@@ -28,54 +26,56 @@ public class AntiprismShapes extends AbstractShapes {
     protected Polyhedron buildConnectorShape(String pkgName) {
         final AntiprismSymmetry symm = getSymmetry();
         final PolygonField field = symm.getField();
-        final int sides = field.polygonSides();
-        final AlgebraicNumber scaleR = field.one();
-        final AlgebraicNumber scaleZ = field.createRational(2,9); // somewhat arbitrary
+        final int nSides = field.polygonSides();
         final Polyhedron antiprism = new Polyhedron( field );
-        final Direction blue = symm.getSpecialOrbit(Symmetry.SpecialOrbit.BLUE);
-        final Direction red = symm.getSpecialOrbit(Symmetry.SpecialOrbit.RED);
-        AlgebraicVector z = red.getPrototype().scale(scaleZ);
-        
-        // add vertices
-        for(Axis b : blue) {
-            if(b.getSense() == 0) {
-                antiprism.addVertex( b.normal().scale(scaleR).plus(z) );
-            }
-        }
-        z = z.negate();
-        for(Axis b : blue) {
-            if(b.getSense() == 0) {
-                antiprism.addVertex( b.normal().scale(scaleR).plus(z) );
-            }
+        final AlgebraicNumber topX = field.one();
+        final AlgebraicNumber topY = field.zero();
+        final AlgebraicNumber maxTerm = field.getUnitTerm(field.getOrder()-1);
+        final AlgebraicNumber botX = field.getUnitTerm(field.getOrder()-2).dividedBy(maxTerm);
+        final AlgebraicNumber botY = maxTerm.reciprocal();
+        final AlgebraicNumber halfHeight = field.getUnitTerm(field.getOrder()-1).reciprocal();
+        final AlgebraicMatrix rotationMatrix = symm.getRotationMatrix();
+
+        // Add vertices
+        // Top and bottom vertices will alternate in the list
+        AlgebraicVector vTop = new AlgebraicVector(topX, topY, halfHeight);
+        AlgebraicVector vBot = new AlgebraicVector(botX, botY, halfHeight.negate());
+        for(int i = 0; i < nSides; i++) {
+            antiprism.addVertex(vTop);
+            antiprism.addVertex(vBot);
+            vTop = rotationMatrix.timesColumn(vTop);
+            vBot = rotationMatrix.timesColumn(vBot);
         }
 
-        // add top N-gon face
-        Polyhedron.Face face = antiprism.newFace();
-        for(int i=0; i < sides; i++) {
-            face.add(i);
+        Polyhedron.Face topFace = antiprism.newFace();
+        Polyhedron.Face botFace = antiprism.newFace();
+        // top rotation is counter-clockwise
+        for(int i = 0; i < nSides*2; i+=2) {
+            topFace.add(i);
         }
-        antiprism.addFace( face );
-
-        // add bottom N-gon face
-        face = antiprism.newFace();
-        for(int i=sides; i < sides*2; i++) {
-            face.add(i);
+        // bottom rotation is opposite of top
+        for(int i = nSides*2-1; i >=0; i-=2) {
+            botFace.add(i);
         }
-        antiprism.addFace( face );
+        antiprism.addFace( topFace );
+        antiprism.addFace( botFace );
 
-        // add all of the rectangular face around the perimiter
-        for(int i=0; i < sides; i++) {
-            // top
-            int t0 = i;
-            int t1 = (i+1) % sides;
-            // bottom
-            int b0 = t0 + sides;
-            int b1 = t1 + sides;
-            face = antiprism.newFace();
-            face.add(t0);
-            face.add(t1);
-            face.add(b1);
-            face.add(b0);
+        // add all of the triangular faces around the perimeter
+        int nVertices = nSides *2;
+        // top first
+        for(int i = 0; i < nSides * 2; i+=2) {
+            Polyhedron.Face face = antiprism.newFace();
+            face.add( i  );
+            face.add((i+1) % nVertices );
+            face.add((i+2) % nVertices );
+            antiprism.addFace( face );
+        }
+        // then the bottom with the points swapped so they face outward
+        for(int i = 1; i < nSides * 2; i+=2) {
+            Polyhedron.Face face = antiprism.newFace();
+            face.add( i  );
+            face.add((i+2) % nVertices );
+            face.add((i+1) % nVertices );
             antiprism.addFace( face );
         }
 

@@ -14,6 +14,7 @@ import com.vzome.core.algebra.AlgebraicMatrix;
 import com.vzome.core.algebra.AlgebraicNumber;
 import com.vzome.core.algebra.AlgebraicVector;
 import com.vzome.core.math.symmetry.Direction;
+import java.util.LinkedHashSet;
 
 
 public class Polyhedron implements Cloneable
@@ -26,7 +27,8 @@ public class Polyhedron implements Cloneable
     
 	protected List<AlgebraicVector> m_vertexList = new ArrayList<>();
 
-	protected Set<Face> m_faces = new HashSet<>();
+    // HashSet would be adequate here, but maintaining insertion order wiht a LinkedHashSet helps debugging.
+	protected Set<Face> m_faces = new LinkedHashSet<>();
     
     private final AlgebraicField field;
     

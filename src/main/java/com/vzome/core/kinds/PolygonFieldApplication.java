@@ -25,13 +25,13 @@ import com.vzome.core.editor.ScalingTool;
 import com.vzome.core.editor.SymmetryTool;
 import com.vzome.core.editor.ToolsModel;
 import com.vzome.core.editor.TranslationTool;
+import com.vzome.core.math.symmetry.AntiprismSymmetry;
 import com.vzome.core.math.symmetry.QuaternionicSymmetry;
 import com.vzome.core.math.symmetry.Symmetry;
 import com.vzome.core.render.Shapes;
 import com.vzome.core.viewing.AbstractShapes;
-import com.vzome.core.viewing.ExportedVEFShapes;
+import com.vzome.core.viewing.AntiprismShapes;
 import com.vzome.core.viewing.OctahedralShapes;
-import com.vzome.fields.heptagon.HeptagonalAntiprismSymmetry;
 
 /**
  * Everything here is stateless, or at worst, a cache (like Shapes).
@@ -55,6 +55,7 @@ public class PolygonFieldApplication extends DefaultFieldApplication<PolygonFiel
     // As a practical matter, this should be plenty.
     // This limit could also be removed here, but enforced in the UI
     // where it could more easily be controlled by a preferences file.
+    // This is not intended to be enforced, just a suggestion for unit tests and the UI, etc...
     public static final int MAXIMUMSIDES = 30;
 
 	public PolygonFieldApplication(int polygonSides)
@@ -62,13 +63,12 @@ public class PolygonFieldApplication extends DefaultFieldApplication<PolygonFiel
 		super( new PolygonField(polygonSides) );
 	}
 
-    private final FieldApplication.SymmetryPerspective heptAntiprismPerspective = new FieldApplication.SymmetryPerspective()
+    private final FieldApplication.SymmetryPerspective antiprismPerspective = new FieldApplication.SymmetryPerspective()
     {
-        private final HeptagonalAntiprismSymmetry symmetry = new HeptagonalAntiprismSymmetry( getField(), "blue", "heptagonal antiprism", true )
-        															.createStandardOrbits( "blue" );
+        private final AntiprismSymmetry symmetry = new AntiprismSymmetry( getField(), "antiprism") .createStandardOrbits( "blue" );
 
         private final AbstractShapes octahedralShapes = new OctahedralShapes( "octahedral", "triangular antiprism", symmetry );
-    	private final AbstractShapes antiprismShapes = new ExportedVEFShapes( null, "heptagon/antiprism", "heptagonal antiprism", symmetry, octahedralShapes );
+    	private final AbstractShapes antiprismShapes = new AntiprismShapes( "antiprism", symmetry );
 
     	private final Command axialsymm = new CommandAxialSymmetry( symmetry );
 
@@ -81,7 +81,7 @@ public class PolygonFieldApplication extends DefaultFieldApplication<PolygonFiel
 		@Override
 		public String getName()
 		{
-			return "heptagonal antiprism corrected";
+			return "antiprism";
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public class PolygonFieldApplication extends DefaultFieldApplication<PolygonFiel
 			switch ( kind ) {
 
 			case SYMMETRY:
-				result .add( new SymmetryTool.Factory( tools, this .symmetry ) .createPredefinedTool( "heptagonal antiprism around origin" ) );
+				result .add( new SymmetryTool.Factory( tools, this .symmetry ) .createPredefinedTool( "polygonal antiprism around origin" ) );
 				result .add( new MirrorTool.Factory( tools ) .createPredefinedTool( "reflection through XY plane" ) );
 				result .add( new AxialSymmetryToolFactory( tools, this .symmetry ) .createPredefinedTool( "symmetry around red through origin" ) );
 				break;
@@ -162,106 +162,107 @@ public class PolygonFieldApplication extends DefaultFieldApplication<PolygonFiel
 		@Override
 		public String getModelResourcePath()
 		{
-			return "org/vorthmann/zome/app/heptagonal antiprism.vZome";
+            // TODO: core shouldn't have hard coded paths into desktop's resources.
+            return "org/vorthmann/zome/app/octahedral-vef.vZome"; //
+//			return "org/vorthmann/zome/app/heptagonal antiprism.vzome"; // TODO: Generalize this
 		}
 	};
 
-	private final FieldApplication.SymmetryPerspective originalPerspective = new FieldApplication.SymmetryPerspective()
-    {
-        private final HeptagonalAntiprismSymmetry symmetry = new HeptagonalAntiprismSymmetry( getField(), "blue", "heptagonal antiprism" )
-        															.createStandardOrbits( "blue" );
-
-        private final AbstractShapes defaultShapes = new OctahedralShapes( "octahedral", "triangular antiprism", symmetry );
-        private final AbstractShapes antiprismShapes = new ExportedVEFShapes( null, "heptagon/antiprism", "heptagonal antiprism", symmetry, defaultShapes );
-
-    	private final Command axialsymm = new CommandAxialSymmetry( symmetry );
-
-		@Override
-		public Symmetry getSymmetry()
-		{
-			return this .symmetry;
-		}
-
-		@Override
-		public String getName()
-		{
-			return "heptagonal antiprism";
-		}
-
-		@Override
-		public List<Shapes> getGeometries()
-		{
-			return Arrays.asList( defaultShapes, antiprismShapes );
-		}
-
-		@Override
-		public Shapes getDefaultGeometry()
-		{
-			return this .defaultShapes;
-		}
-
-		@Override
-		public List<Tool.Factory> createToolFactories( Tool.Kind kind, ToolsModel tools )
-		{
-			List<Tool.Factory> result = new ArrayList<>();
-			return result;
-		}
-
-		@Override
-		public List<Tool> predefineTools( Tool.Kind kind, ToolsModel tools )
-		{
-			List<Tool> result = new ArrayList<>();
-			return result;
-		}
-
-		@Override
-		public Command getLegacyCommand( String action )
-		{
-			switch ( action ) {
-			case "axialsymm"    : return axialsymm;
-			default:
-				return null;
-			}
-		}
-
-		@Override
-		public String getModelResourcePath()
-		{
-			return "org/vorthmann/zome/app/heptagonal antiprism.vZome";
-		}
-	};
-
-//		      Symmetry symmetry = new TriangularAntiprismSymmetry( kind, "blue", "triangular antiprism" );
-//		      mStyles.put( symmetry, new ArrayList<>() );
-//		      defaultShapes = new OctahedralShapes( "octahedral", "triangular antiprism", symmetry );
-//		      addStyle( defaultShapes );
-//		  }
+//	private final FieldApplication.SymmetryPerspective originalPerspective = new FieldApplication.SymmetryPerspective()
+//    {
+//        private final HeptagonalAntiprismSymmetry symmetry = new HeptagonalAntiprismSymmetry( getField(), "blue", "heptagonal antiprism" )
+//        															.createStandardOrbits( "blue" );
+//
+//        private final AbstractShapes defaultShapes = new OctahedralShapes( "octahedral", "triangular antiprism", symmetry );
+//        private final AbstractShapes antiprismShapes = new ExportedVEFShapes( null, "heptagon/antiprism", "heptagonal antiprism", symmetry, defaultShapes );
+//
+//    	private final Command axialsymm = new CommandAxialSymmetry( symmetry );
+//
+//		@Override
+//		public Symmetry getSymmetry()
+//		{
+//			return this .symmetry;
+//		}
+//
+//		@Override
+//		public String getName()
+//		{
+//			return "heptagonal antiprism";
+//		}
+//
+//		@Override
+//		public List<Shapes> getGeometries()
+//		{
+//			return Arrays.asList( defaultShapes, antiprismShapes );
+//		}
+//
+//		@Override
+//		public Shapes getDefaultGeometry()
+//		{
+//			return this .defaultShapes;
+//		}
+//
+//		@Override
+//		public List<Tool.Factory> createToolFactories( Tool.Kind kind, ToolsModel tools )
+//		{
+//			List<Tool.Factory> result = new ArrayList<>();
+//			return result;
+//		}
+//
+//		@Override
+//		public List<Tool> predefineTools( Tool.Kind kind, ToolsModel tools )
+//		{
+//			List<Tool> result = new ArrayList<>();
+//			return result;
+//		}
+//
+//		@Override
+//		public Command getLegacyCommand( String action )
+//		{
+//			switch ( action ) {
+//			case "axialsymm"    : return axialsymm;
+//			default:
+//				return null;
+//			}
+//		}
+//
+//		@Override
+//		public String getModelResourcePath()
+//		{
+//			return "org/vorthmann/zome/app/heptagonal antiprism.vZome";
+//		}
+//	};
+//
+////		      Symmetry symmetry = new TriangularAntiprismSymmetry( kind, "blue", "triangular antiprism" );
+////		      mStyles.put( symmetry, new ArrayList<>() );
+////		      defaultShapes = new OctahedralShapes( "octahedral", "triangular antiprism", symmetry );
+////		      addStyle( defaultShapes );
+////		  }
 
 	@Override
 	public Collection<FieldApplication.SymmetryPerspective> getSymmetryPerspectives()
 	{
-		return Arrays.asList( this .heptAntiprismPerspective, super .getDefaultSymmetryPerspective(), this .originalPerspective );
+		return Arrays.asList( this .antiprismPerspective, super .getDefaultSymmetryPerspective() );
 	}
 
 	@Override
 	public FieldApplication.SymmetryPerspective getDefaultSymmetryPerspective()
 	{
-		return this .heptAntiprismPerspective;
+		return this .antiprismPerspective;
 	}
 
 	@Override
 	public FieldApplication.SymmetryPerspective getSymmetryPerspective( String symmName )
 	{
 		switch ( symmName ) {
+            case "antiprism":
+                return antiprismPerspective;
 
-		case "heptagonal antiprism corrected":
-			return this .heptAntiprismPerspective;
+//            case "triangular antiprism": // TODO
+//                return triangularAntiprismPerspective;
 
-		case "heptagonal antiprism":
-			return this .originalPerspective;
-
-		default:
-			return super .getSymmetryPerspective( symmName );
+            default:
+                return super .getSymmetryPerspective( symmName );
 		}
 	}
 

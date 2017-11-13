@@ -26,7 +26,10 @@ public class TriangularAntiprismSymmetry extends OctahedralSymmetry
         double sqrt2 = Math.sqrt( 2d );
         double g = ( sqrt2 + 2*a_over_h ) / ( sqrt2 - a_over_h );
         double scale = 1d / 9d; // reducing the enlarging due to use of (1,1,g) basis, since g > 9.
-        SHEAR = new Matrix3d( g * scale, scale, scale, scale, g * scale, scale, scale, scale, g * scale );
+        SHEAR = new Matrix3d (
+                g * scale,     scale,     scale,
+                    scale, g * scale,     scale,
+                    scale,     scale, g * scale );
 	}
 
 	@Override

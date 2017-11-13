@@ -66,38 +66,38 @@ public class HeptagonalAntiprismSymmetryTest {
         RealVector v7 = new RealVector( -0.1, -0.1, 3.0 );
         RealVector v8 = new RealVector( -0.1, -0.1, -3.0 );
 
-        Direction orbit = symm .getDirection( "red" );
+        Direction redOrbit = symm .getDirection( "red" );
 
-        Axis axis = orbit .getAxis( v1 );
-        Axis expected = orbit .getAxis( Axis.PLUS, 1 ); // these numbers are pretty arbitrary, for red...
+        Axis axis = redOrbit .getAxis( v1 );
+        Axis expected = redOrbit .getAxis( Axis.PLUS, 1 ); // these numbers are pretty arbitrary, for red...
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v2 );
-        expected = orbit .getAxis( Axis.PLUS, 7 ); // since there are really only "up" and "down"
+        axis = redOrbit .getAxis( v2 );
+        expected = redOrbit .getAxis( Axis.PLUS, 7 ); // since there are really only "up" and "down"
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v3 );
-        expected = orbit .getAxis( Axis.MINUS, 11 );
+        axis = redOrbit .getAxis( v3 );
+        expected = redOrbit .getAxis( Axis.MINUS, 11 );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v4 );
-        expected = orbit .getAxis( Axis.PLUS, 13 );
+        axis = redOrbit .getAxis( v4 );
+        expected = redOrbit .getAxis( Axis.PLUS, 13 );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v5 );
-        expected = orbit .getAxis( Axis.PLUS, 3 );
+        axis = redOrbit .getAxis( v5 );
+        expected = redOrbit .getAxis( Axis.PLUS, 3 );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v6 );
-        expected = orbit .getAxis( Axis.PLUS, 8 );
+        axis = redOrbit .getAxis( v6 );
+        expected = redOrbit .getAxis( Axis.PLUS, 8 );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v7 );
-        expected = orbit .getAxis( Axis.MINUS, 8 );
+        axis = redOrbit .getAxis( v7 );
+        expected = redOrbit .getAxis( Axis.MINUS, 8 );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v8 );
-        expected = orbit .getAxis( Axis.PLUS, 9 );
+        axis = redOrbit .getAxis( v8 );
+        expected = redOrbit .getAxis( Axis.PLUS, 9 );
         assertEquals( expected, axis );
     }
 
@@ -117,38 +117,38 @@ public class HeptagonalAntiprismSymmetryTest {
         RealVector v7 = new RealVector( -0.5, -0.1, 0.1 );
         RealVector v8 = new RealVector( -0.5, -0.1, -0.1 );
 
-        Direction orbit = symm .getDirection( "blue" );
+        Direction blueOrbit = symm .getDirection( "blue" );
 
-        Axis axis = orbit .getAxis( v1 );
-        Axis expected = orbit .getAxis( Axis.PLUS, 0, true );
+        Axis axis = blueOrbit .getAxis( v1 );
+        Axis expected = blueOrbit .getAxis( Axis.PLUS, 0, true );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v2 );
-        expected = orbit .getAxis( Axis.MINUS, 0, true );
+        axis = blueOrbit .getAxis( v2 );
+        expected = blueOrbit .getAxis( Axis.MINUS, 0, true );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v3 );
-        expected = orbit .getAxis( Axis.MINUS, 7, true );
+        axis = blueOrbit .getAxis( v3 );
+        expected = blueOrbit .getAxis( Axis.MINUS, 7, true );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v4 );
-        expected = orbit .getAxis( Axis.PLUS, 7, true );
+        axis = blueOrbit .getAxis( v4 );
+        expected = blueOrbit .getAxis( Axis.PLUS, 7, true );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v5 );
-        expected = orbit .getAxis( Axis.PLUS, 7, false );
+        axis = blueOrbit .getAxis( v5 );
+        expected = blueOrbit .getAxis( Axis.PLUS, 7, false );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v6 );
-        expected = orbit .getAxis( Axis.MINUS, 7, false );
+        axis = blueOrbit .getAxis( v6 );
+        expected = blueOrbit .getAxis( Axis.MINUS, 7, false );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v7 );
-        expected = orbit .getAxis( Axis.MINUS, 0, false );
+        axis = blueOrbit .getAxis( v7 );
+        expected = blueOrbit .getAxis( Axis.MINUS, 0, false );
         assertEquals( expected, axis );
 
-        axis = orbit .getAxis( v8 );
-        expected = orbit .getAxis( Axis.PLUS, 0, false );
+        axis = blueOrbit .getAxis( v8 );
+        expected = blueOrbit .getAxis( Axis.PLUS, 0, false );
         assertEquals( expected, axis );
     }
 }

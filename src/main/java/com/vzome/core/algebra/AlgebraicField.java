@@ -217,6 +217,27 @@ public abstract class AlgebraicField
         return createAlgebraicNumber( new int[]{0, 1} );
     }
 
+    /**
+     * @param n specifies the ordinal of the term in the AlgebraicNumber which will be set to one.
+     * When {@code n == 0}, the result is the same as {@code createRational(1)}.
+     * When {@code n == 1}, the result is the same as {@code createPower(1)}.
+     * When {@code n < 0}, the result will be {@code zero()}.
+     * When {@code n >- getOrder()}, an IndexOutOfBoundsException will be thrown.
+     * @return an AlgebraicNumber with the factor specified by {@code n} set to one.
+     */
+    public AlgebraicNumber getUnitTerm(int n) {
+        if(n < 0) {
+            return zero();
+        }
+        // Be sure to use this.createRational(0) here
+        // instead of using this.zero()
+        // because we are going to tweak the underlying factors.
+        // The underlying factors of zero() and one() must remain immutable although it's not (currently) enforced in code.
+        BigRational[] factors = this.createRational(0).getFactors();
+        factors[n] = new BigRational(1);
+        return createAlgebraicNumber(factors);
+    }
+
     public BigRational[] negate( BigRational[] array )
     {
         BigRational[] result = new BigRational[ array.length ];
