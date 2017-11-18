@@ -56,6 +56,9 @@ public class PolygonField extends ParameterizedField<Integer> {
 
     @Override
     protected void initializeLabels() {
+        // odd-gons are labeled with the same lower case Greek letters as
+        // Peter Steinbach uses in "Sections Beyond Golden"
+        // See http://archive.bridgesmathart.org/2000/bridges2000-35.pdf
         switch(polygonSides()) {
             case 4:
                 irrationalLabels[1] = new String[]{ "\u221A" + "2", "sqrtTwo" };
@@ -75,18 +78,18 @@ public class PolygonField extends ParameterizedField<Integer> {
                 irrationalLabels[2] = new String[]{ "\u03C3", "sigma" };
                 break;
 
-//            case 9:
-//                irrationalLabels[1] = new String[]{ "\u03B1", "alpha" };
-//                irrationalLabels[2] = new String[]{ "\u03B2", "beta" };
-//                irrationalLabels[3] = new String[]{ "\u03B3", "gamma" };
-//                break;
-//
-//            case 11:
-//                irrationalLabels[1] = new String[]{ "\u03B8", "theta"  };
-//                irrationalLabels[2] = new String[]{ "\u03BA", "kappa"  };
-//                irrationalLabels[3] = new String[]{ "\u03BB", "lambda" };
-//                irrationalLabels[4] = new String[]{ "\u03BC", "mu"     };
-//                break;
+            case 9:
+                irrationalLabels[1] = new String[]{ "\u03B1", "alpha" };
+                irrationalLabels[2] = new String[]{ "\u03B2", "beta" };
+                irrationalLabels[3] = new String[]{ "\u03B3", "gamma" };
+                break;
+
+            case 11:
+                irrationalLabels[1] = new String[]{ "\u03B8", "theta"  };
+                irrationalLabels[2] = new String[]{ "\u03BA", "kappa"  };
+                irrationalLabels[3] = new String[]{ "\u03BB", "lambda" };
+                irrationalLabels[4] = new String[]{ "\u03BC", "mu"     };
+                break;
 
             default:
                 final String alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -111,6 +114,7 @@ public class PolygonField extends ParameterizedField<Integer> {
     }
 
     private static String subscriptString(int i) {
+        // also see https://stackoverflow.com/questions/17908593/how-to-find-the-unicode-of-the-subscript-alphabet
         return Integer.toString(i)
                 .replace("0", "\u2080")
                 .replace("1", "\u2081")

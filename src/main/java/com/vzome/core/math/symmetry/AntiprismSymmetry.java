@@ -10,6 +10,7 @@ import javax.vecmath.Vector3d;
 
 /**
  * @author David Hall
+ * This class is a generalized implementation of the HeptagonalAntiprismSymmetry by Scott Vorthmann
  */
 public class AntiprismSymmetry extends AbstractSymmetry {
 
@@ -20,9 +21,8 @@ public class AntiprismSymmetry extends AbstractSymmetry {
 
     public AntiprismSymmetry(PolygonField field, String defaultStyle) {
         super( field.polygonSides()*2, field, "blue", defaultStyle,
-                // TODO: Is this last parameter null or different when nSides is a multiple of 2 or 4?
-                // reflection in Z (red) will yield the negative zones
-				new AlgebraicMatrix(
+                field.isEven() ? null   // reflection through origin yields negative zones for even-gons
+                : new AlgebraicMatrix(  // reflection in Z (red) will yield the negative zones for odd-gons
                         field .basisVector( 3, AlgebraicVector.X ),
 						field .basisVector( 3, AlgebraicVector.Y ),
 						field .basisVector( 3, AlgebraicVector.Z ) .negate()
