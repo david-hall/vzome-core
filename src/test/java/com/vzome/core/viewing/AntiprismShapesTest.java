@@ -5,6 +5,8 @@ import com.vzome.core.algebra.AlgebraicNumber;
 import com.vzome.core.algebra.AlgebraicVector;
 import com.vzome.core.algebra.AlgebraicVectors;
 import com.vzome.core.algebra.HeptagonField;
+import com.vzome.core.algebra.ParameterizedFieldTest;
+import com.vzome.core.algebra.ParameterizedFieldTest.SnubDodecahedronField;
 import com.vzome.core.algebra.PentagonField;
 import com.vzome.core.algebra.PhiPlusSqrtField;
 import com.vzome.core.algebra.PolygonField;
@@ -117,11 +119,9 @@ public class AntiprismShapesTest {
                     : operand == 0 ? new SnubCubeField()
                     : operand == 1 ? new SqrtPhiField()
                     : operand == 2 ? new SnubDodecField(new PentagonField())
-                    // TODO: SnubDodecagonField().getUnitTerm(5).reciprocal() throws an exception,
-                    // so add it to this list when that bug gets fixed.
-                    // TODO: add new SnubDodecagonField() which is different from SnubDodecField
-                    : operand == 3 ? new PhiPlusSqrtField(3)
-                    : new PolygonField(operand); // starts at 4
+                    : operand == 3 ? new ParameterizedFieldTest().new SnubDodecahedronField()
+                    : operand == 4 ? new PhiPlusSqrtField(3)
+                    : new PolygonField(operand - 1); // starts at 4
             int order = field.getOrder();
             AlgebraicNumber[] terms = new AlgebraicNumber[order];
             for(int term = 0; term < order; term++) {

@@ -1,7 +1,6 @@
 package com.vzome.core.algebra;
 
 import static com.vzome.core.algebra.AlgebraicField.DEFAULT_FORMAT;
-import static com.vzome.core.algebra.AlgebraicField.VEF_FORMAT;
 import com.vzome.core.math.RealVector;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
@@ -373,11 +372,11 @@ public class ParameterizedFieldTest {
 
 
 
-    public class SnubDodecagonField extends ParameterizedField<Integer> {
+    public class SnubDodecahedronField extends ParameterizedField<Integer> {
 
         private SnubDodecField snub;
-        public SnubDodecagonField() {
-            super("snubDodecagon", 6, 6);
+        public SnubDodecahedronField() {
+            super("snubDodecahedron", 6, 6);
         }
 
         @Override
@@ -402,9 +401,9 @@ public class ParameterizedFieldTest {
                     {1, 0, 0, 0, 0, 0 },
                     {0, 1, 0, 0, 0, 0 },
                     {0, 0, 0, 0, 0, 1 },
-                    {0, 0, 0, 0, 1, 0 },
+                    {0, 0, 0, 0, 1, 1 },
                     {0, 0, 0, 1, 0, 0 },
-                    {0, 0, 1, 0, 0, 0 },
+                    {0, 0, 1, 1, 0, 0 },
                 },
                 { // phi
                     {0, 1, 0, 0, 0, 0 },
@@ -428,7 +427,7 @@ public class ParameterizedFieldTest {
                     {0, 1, 0, 0, 0, 2 },
                     {1, 1, 0, 0, 2, 2 },
                     {0, 0, 0, 2, 1, 1 },
-                    {0, 0, 2, 2, 1, 1 },
+                    {0, 0, 2, 2, 1, 2 },
                 },
                 { // xi^2
                     {0, 0, 0, 0, 1, 0 },
@@ -479,23 +478,7 @@ public class ParameterizedFieldTest {
 //    @Test
     public void printSnubPolygonFieldMatrices() {
 //        printMatrices(new SnubCubeField());
-        printMatrices(new SnubDodecagonField());
-    }
-
-    @Test
-    public void testSnubDodecagonFieldReciprocal() {
-        SnubDodecField field1 = new SnubDodecField(new PentagonField());
-        SnubDodecagonField field2 = new SnubDodecagonField();
-        AlgebraicField[] fields = { field1, field2 };
-        
-//        AlgebraicNumber unitTerm2 = field2.getUnitTerm(field.getOrder()-1);
-        for(AlgebraicField field : fields) {
-            AlgebraicNumber unitTerm = field.createAlgebraicNumber(new int[] {0,0,0,0,0,1});
-            System.out.println(field.getName());
-            System.out.println(unitTerm.toString(VEF_FORMAT));
-            System.out.println(unitTerm);
-            System.out.println(unitTerm.reciprocal());
-        }
+        printMatrices(new SnubDodecahedronField());
     }
 
 //    @Test
