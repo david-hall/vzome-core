@@ -60,10 +60,12 @@ import java.util.function.Supplier;
 
 public class Application
 {
-    private abstract class FieldApplicationFunction<T extends FieldApplication<?>> implements Function<Integer, T> {
+    private class FieldApplicationFunction<T extends FieldApplication<?>> {
+        public final Function<Integer, T> factory;
         public final int minimum;
         public final int maximum;
-        public FieldApplicationFunction(int min, int max) {
+        public FieldApplicationFunction(Function<Integer, T> function, int min, int max) {
+            factory = function;
             minimum = min;
             maximum = max;
         }
@@ -72,7 +74,7 @@ public class Application
          * 
          * @param operand
          * @return a FieldApplication. An IllegalArgumentException is thrown if limits are not null and the operand is out of range.
-         * Use {@code apply(operand)} directly to bypass the range checks
+         * Use {@code factory.apply(operand)} directly to bypass the range checks
          */
         public T get(Integer operand) {
             if(operand < minimum) {
@@ -81,7 +83,7 @@ public class Application
             if(operand > maximum) {
                 throw new IllegalArgumentException("operand " + operand + " must be less than " + maximum);
             }
-            return apply(operand);
+            return factory.apply(operand);
         }
     }
 
@@ -156,24 +158,15 @@ public class Application
 
         // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // Now add all of the parameterized FieldApplication functions
-        this.fieldAppFunctions.put("polygon", new FieldApplicationFunction<PolygonFieldApplication>(PolygonField.MINIMUMSIDES, PolygonFieldApplication.MAXIMUMSIDES ) {
-            @Override
-            public PolygonFieldApplication apply(Integer operand) {
-                return new PolygonFieldApplication(operand);
-            }
-        });
-        this.fieldAppFunctions.put("sqrt", new FieldApplicationFunction<SqrtFieldApplication>(1, Integer.MAX_VALUE) { // range is any positive integer
-            @Override
-            public SqrtFieldApplication apply(Integer operand) {
-                return new SqrtFieldApplication(operand);
-            }
-        });
-        this.fieldAppFunctions.put("phiPlusSqrt", new FieldApplicationFunction<PhiPlusSqrtFieldApplication>(1, Integer.MAX_VALUE) { // range is any positive integer
-            @Override
-            public PhiPlusSqrtFieldApplication apply(Integer operand) {
-                return new PhiPlusSqrtFieldApplication(operand);
-            }
-        });
+        addFieldApplicationFunction("polygon", PolygonFieldApplication::new, PolygonField.MINIMUMSIDES, PolygonFieldApplication.MAXIMUMSIDES);
+        addFieldApplicationFunction("sqrt", SqrtFieldApplication::new, 1, Integer.MAX_VALUE);
+        addFieldApplicationFunction("phiPlusSqrt", PhiPlusSqrtFieldApplication::new, 1, Integer.MAX_VALUE);
+    }
+
+    private <T extends FieldApplication<?>> FieldApplicationFunction<? extends FieldApplication<?>>
+        addFieldApplicationFunction(String name, Function<Integer, T> function, int min, int max)
+    {
+         return this.fieldAppFunctions.put(name, new FieldApplicationFunction<>(function, min, max));
     }
 
     public DocumentModel loadDocument( InputStream bytes ) throws Exception
